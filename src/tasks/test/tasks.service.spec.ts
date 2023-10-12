@@ -31,7 +31,12 @@ describe('TasksService', () => {
 
   describe('findAll', () => {
     it('should return an array of tasks', async () => {
-      expect(await service.findAll()).toStrictEqual(tasks);
+      const result = {
+        tasks: tasks,
+        totalTasks: tasks.length,
+        totalPages: 1,
+      };
+      expect(await service.findAll({})).toStrictEqual(result);
     });
   });
 

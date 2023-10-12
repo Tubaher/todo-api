@@ -21,9 +21,28 @@ export class TasksService {
     }
   }
 
-  async findAll() {
+  async findAll({
+    page = 1,
+    perPage = 10,
+  }: {
+    page?: number;
+    perPage?: number;
+  }) {
+    const skipCount = (page - 1) * perPage;
+
     try {
-      return await this.db.task.findMany();
+      const tasks = await this.db.task.findMany({
+        skip: skipCount,
+        take: perPage,
+      });
+      const totalTasks = await this.db.task.count();
+      const totalPages = Math.ceil(totalTasks / perPage);
+
+      return {
+        tasks,
+        totalTasks,
+        totalPages,
+      };
     } catch (error) {
       this.logger.error(error);
       throw new Error('The tasks could not be retrieved');

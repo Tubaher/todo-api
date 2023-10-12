@@ -11,6 +11,7 @@ export const DatabaseMockProvider: Provider = {
       findUnique: jest.fn().mockResolvedValue(tasks[0]),
       update: jest.fn().mockResolvedValue(tasks[0]),
       delete: jest.fn().mockResolvedValue(tasks[0]),
+      count: jest.fn().mockResolvedValue(tasks.length),
       // findUnique: jest.fn(),
       // add more mock functions as needed
     },
