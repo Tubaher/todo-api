@@ -9,9 +9,16 @@ export class TasksService {
   private readonly logger = new Logger(TasksService.name);
 
   async create(createTaskDto: Prisma.taskCreateInput) {
+    const { dueBy } = createTaskDto;
+    const formattedDueBy = new Date(dueBy);
+    const taskData = {
+      ...createTaskDto,
+      dueBy: formattedDueBy,
+    };
+
     try {
       return await this.db.task.create({
-        data: createTaskDto,
+        data: taskData,
       });
     } catch (error) {
       this.logger.error(error);
@@ -42,6 +49,8 @@ export class TasksService {
         tasks,
         totalTasks,
         totalPages,
+        currentPage: page,
+        perPage: perPage,
       };
     } catch (error) {
       this.logger.error(error);

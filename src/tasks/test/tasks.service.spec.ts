@@ -35,6 +35,8 @@ describe('TasksService', () => {
         tasks: tasks,
         totalTasks: tasks.length,
         totalPages: 1,
+        currentPage: 1,
+        perPage: 10,
       };
       expect(await service.findAll({})).toStrictEqual(result);
     });
@@ -51,13 +53,11 @@ describe('TasksService', () => {
   describe('update', () => {
     it('should update a task', async () => {
       const task = {
-        title: 'Test title',
-        description: 'Test description',
-        dueBy: '2023-09-28T01:44:43.236Z',
+        done: true,
       };
       expect(
         await service.update('d9ad58c7-8b29-4777-8e8c-860f53401dc6', task),
-      ).toStrictEqual(tasks[0]);
+      ).toStrictEqual({ ...tasks[0], done: true });
     });
   });
 
