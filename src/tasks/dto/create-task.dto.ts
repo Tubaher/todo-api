@@ -8,5 +8,5 @@ export class CreateTaskDto {
   description: string;
 
   @IsDateString()
-  dueBy: Date;
+  dueBy: string;
 }
