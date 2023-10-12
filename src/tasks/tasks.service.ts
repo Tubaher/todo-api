@@ -1,26 +1,68 @@
-import { Injectable } from '@nestjs/common';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
+import { Injectable, Logger } from '@nestjs/common';
+import { DatabaseService } from '../database/database.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class TasksService {
-  create(createTaskDto: CreateTaskDto) {
-    return 'This action adds a new task';
+  constructor(private readonly db: DatabaseService) {}
+
+  private readonly logger = new Logger(TasksService.name);
+
+  async create(createTaskDto: Prisma.taskCreateInput) {
+    try {
+      return await this.db.task.create({
+        data: createTaskDto,
+      });
+    } catch (error) {
+      this.logger.error(error);
+      throw new Error(
+        'The task already exists or it is violating a constraint',
+      );
+    }
   }
 
-  findAll() {
-    return `This action returns all tasks`;
+  async findAll() {
+    try {
+      return await this.db.task.findMany();
+    } catch (error) {
+      this.logger.error(error);
+      throw new Error('The tasks could not be retrieved');
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} task`;
+  async findOne(id: string) {
+    try {
+      return await this.db.task.findUnique({
+        where: { id },
+      });
+    } catch (error) {
+      this.logger.error(error);
+      throw new Error('Could not retrieve task information');
+    }
   }
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
+  async update(id: string, updateTaskDto: Prisma.taskUpdateInput) {
+    try {
+      return await this.db.task.update({
+        where: { id },
+        data: updateTaskDto,
+      });
+    } catch (error) {
+      this.logger.error(error);
+      throw new Error(
+        'The task to be updated does not exist or the data is invalid',
+      );
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} task`;
+  async remove(id: string) {
+    try {
+      return await this.db.task.delete({ where: { id } });
+    } catch (error) {
+      this.logger.error(error);
+      throw new Error(
+        'The task could not be deleted. The task does not exist.',
+      );
+    }
   }
 }
